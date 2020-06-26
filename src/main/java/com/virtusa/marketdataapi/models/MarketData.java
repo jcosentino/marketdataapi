@@ -1,6 +1,6 @@
 package com.virtusa.marketdataapi.models;
 
-import java.sql.Date;
+import java.time.LocalDate;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -47,12 +47,6 @@ public class MarketData {
 	@Column(name="Adjusted_Volume")
 	private float adjVol;
 	
-	@Column(name="FiftyTwo_Week_High")
-	private float fiftyTwoWeekHigh;
-	
-	@Column(name="FiftyTwo_Week_Low")
-	private float fiftyTwoWeekLow;
-	
 	@Column(name="Selected_Date", nullable = false)
-	private Date date;
+	private LocalDate date;
 }
