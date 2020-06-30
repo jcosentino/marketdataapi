@@ -2,8 +2,18 @@ package com.virtusa.marketdataapi.util;
 
 import java.io.IOException;
 import java.io.StringReader;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.Arrays;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.http.HttpEntity;
@@ -21,19 +31,22 @@ import com.virtusa.marketdataapi.models.MarketData;
 
 @EnableConfigurationProperties(VaultConfiguration.class)
 public class MarketDataGenerator {
-	private final VaultConfiguration vaultConfiguration;
+	private static final Logger logger = LoggerFactory.getLogger(MarketDataGenerator.class);
 	
-	public MarketDataGenerator(VaultConfiguration configuration) {
-		this.vaultConfiguration = configuration;
-	}
+//	private static final VaultConfiguration vaultConfiguration;
 	
 	@Autowired
 	private RestTemplate restTemplate;
 	
+//	public MarketDataGenerator(VaultConfiguration configuration) {
+//		this.vaultConfiguration = configuration;
+//	}
+
 	private static String getMarketDataFetch(String symbol, String date){
 		String url = "http://api.marketstack.com/v1/eod";
 		String token = "8aefe27bba3f434b598e57b2da0ef305";
-//		String token = vaultConfiguration.
+//		String token = vaultConfiguration.getApiKey();
+		logger.info("Symbol: {sym}".format(symbol));
 		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url)
 		        .queryParam("access_key", token)
 		        .queryParam("symbols", symbol)
@@ -51,29 +64,45 @@ public class MarketDataGenerator {
         }
 	}
 	
-	private static Object getMarketDataObj(String symbol, String date) {
+	public static MarketData getMarketDataObj(String symbol, String date) {
 		String jsonString = getMarketDataFetch(symbol, date);
-		System.out.println("John");
 		ObjectMapper mapper = new ObjectMapper();
+		MarketData marketData = (new MarketData());
 		try {
-			System.out.println("try");
 			JsonNode data = mapper.readTree(new StringReader(jsonString));
 			data = data.get("data").get(0);
-//			MarketData marketData = mapper.readValue(data.asText(), MarketData.class);
-			return data.get("open");
+			if(data == null) {
+				return marketData;
+			}
+			marketData.setSymbol(symbol);
+			float open = Float.parseFloat(data.get("open").toString());
+			marketData.setOpen(open);
+			float close = Float.parseFloat(data.get("close").toString());
+			marketData.setClose(close);
+			float high = Float.parseFloat(data.get("high").toString());
+			marketData.setHigh(high);
+			float low = Float.parseFloat(data.get("low").toString());
+			marketData.setLow(low);
+			float volume = Float.parseFloat(data.get("volume").toString());
+			marketData.setVolume(volume);
+			float adjHigh = Float.parseFloat(data.get("adj_high").toString());
+			marketData.setAdjHigh(adjHigh);
+			float adjLow = Float.parseFloat(data.get("adj_low").toString());
+			marketData.setAdjLow(adjLow);
+			float adjClose = Float.parseFloat(data.get("adj_close").toString());
+			marketData.setAdjClose(adjClose);
+			float adjOpen = Float.parseFloat(data.get("adj_open").toString());
+			marketData.setAdjOpen(adjOpen);
+			float adjVol = Float.parseFloat(data.get("adj_volume").toString());
+			marketData.setAdjVol(adjVol);
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+			LocalDate apiDate = LocalDate.parse(date, formatter);
+			marketData.setDate(apiDate);
 		} catch(IOException e) {
-			return "Error data";
+			e.printStackTrace();
+			marketData.setDate(LocalDate.now());
 		}
-	}
-	
-	public static void init() {
-		System.out.println("beginning");
-		System.out.println("\n\n\n\n\n");
-		String symbol = "MSFT";
-		String date = "2020-06-26";
-		System.out.println(getMarketDataObj(symbol, date));
-		System.out.println("\n\n\n\n\n");
-		System.out.println("end");
+		return marketData;
 	}
 
 }

@@ -7,6 +7,8 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import lombok.Data;
 
 @Data
@@ -32,18 +34,23 @@ public class MarketData {
 	@Column(name="Volume")
 	private float volume;
 
+	@JsonProperty("adj_high")
 	@Column(name="Adjusted_High")
 	private float adjHigh;
     
+	@JsonProperty("adj_low")
 	@Column(name="Adjusted_Low")
 	private float adjLow;
-    
+
+	@JsonProperty("adj_close")
 	@Column(name="Adjusted_Close")
 	private float adjClose;
     
+	@JsonProperty("adj_open")
 	@Column(name="Adjusted_Open")
 	private float adjOpen;
     
+	@JsonProperty("adj_vol")
 	@Column(name="Adjusted_Volume")
 	private float adjVol;
 	

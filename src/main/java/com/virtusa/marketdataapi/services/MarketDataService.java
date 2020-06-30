@@ -9,8 +9,4 @@ import com.virtusa.marketdataapi.repositories.MarketDataRepository;
 public class MarketDataService {
 	@Autowired
 	private MarketDataRepository marketDataRepository;
-	
-//	public MarketData getStock(String symbol, String date) {
-//		return this.marketDataRepository.;
-//	}
 }
