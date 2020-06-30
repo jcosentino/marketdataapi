@@ -21,6 +21,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -29,6 +30,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.virtusa.marketdataapi.configurations.VaultConfiguration;
 import com.virtusa.marketdataapi.models.MarketData;
 
+@Service
 @EnableConfigurationProperties(VaultConfiguration.class)
 public class MarketDataGenerator {
 	private static final Logger logger = LoggerFactory.getLogger(MarketDataGenerator.class);
@@ -66,7 +68,9 @@ public class MarketDataGenerator {
         }
 	}
 	
-	public static MarketData getMarketDataObj(String symbol, String date) {
+	public static MarketData getMarketDataObj() {
+		String symbol = "DDOG";
+		String date = "2020-06-25";
 		String jsonString = getMarketDataFetch(symbol, date);
 		ObjectMapper mapper = new ObjectMapper();
 		MarketData marketData = (new MarketData());

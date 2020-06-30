@@ -13,6 +13,6 @@ public class MarketDataController {
 	@CrossOrigin("*")
 	@GetMapping("/marketdata")
 	public MarketData getMarketData(@RequestParam String symbol, @RequestParam String date) {
-		return MarketDataGenerator.getMarketDataObj(symbol, date);
+		return MarketDataGenerator.getMarketDataObj();
 	}
 }
